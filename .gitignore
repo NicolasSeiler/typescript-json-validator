@@ -27,3 +27,10 @@ environment.toml
 .env
 
 src/__tests__/**/*.validator.ts
+
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*

@@ -2,9 +2,7 @@
   "name": "typescript-json-validator",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "bin": {
-    "typescript-json-validator": "./lib/cli.js"
-  },
+  "bin": "./lib/cli.js",
   "files": [
     "lib/"
   ],
