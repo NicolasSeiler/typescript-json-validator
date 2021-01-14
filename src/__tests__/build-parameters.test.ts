@@ -3,6 +3,8 @@ import rimrafCB from 'rimraf';
 import {exec as execCB, ExecOptions} from 'child_process';
 import * as path from 'path';
 import {promisify} from 'util';
+import {promises} from 'fs';
+const {copyFile, unlink} = promises;
 
 jest.setTimeout(30000);
 
@@ -22,7 +24,10 @@ const exec = (cmd: string, options: ExecOptions): Promise<string> =>
   });
 
 const buildProject = async (project: string) => {
-  await exec(`cp tsconfig.${project}.json tsconfig.json`, {cwd: testDir});
+  await copyFile(
+    path.join(testDir, `tsconfig.${project}.json`),
+    path.join(testDir, 'tsconfig.json'),
+  );
 
   await exec(`node ../../../lib/cli ./src/Example.ts ExampleType`, {
     cwd: testDir,
@@ -44,8 +49,8 @@ beforeAll(() => exec('yarn build', {cwd: process.cwd()}));
 afterEach(() =>
   Promise.all([
     rimraf(path.join(testDir, 'lib')),
-    exec('rm tsconfig.json', {cwd: testDir}),
-    exec('rm src/Example.validator.ts', {cwd: testDir}),
+    unlink(path.join(testDir, 'tsconfig.json')),
+    unlink(path.join(testDir, 'src/Example.validator.ts')),
   ]),
 );
 
