@@ -947,6 +947,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/normalize-path@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@types/normalize-path@npm:3.0.0"
+  checksum: 1cff3a34d0c0c37bca26a60e19407783fe85cde0af0ccfe7773001019c6339927460127c043163638d04f54415d165766173d9881ad8e7eb7870e4be2657ee45
+  languageName: node
+  linkType: hard
+
 "@types/prettier@npm:^2.0.0":
   version: 2.1.6
   resolution: "@types/prettier@npm:2.1.6"
@@ -5552,6 +5559,7 @@ resolve@^1.18.1:
     "@types/koa-router": ^7.4.1
     "@types/minimatch": ^3.0.3
     "@types/node": ^10.17.50
+    "@types/normalize-path": ^3.0.0
     "@types/rimraf": ^2.0.4
     cross-spawn: ^6.0.5
     glob: ^7.1.6
@@ -5559,6 +5567,7 @@ resolve@^1.18.1:
     jest: ^26.6.3
     json-stable-stringify: ^1.0.1
     minimatch: ^3.0.4
+    normalize-path: ^3.0.0
     prettier: ^1.19.1
     pretty-quick: ^1.11.1
     rimraf: ^2.6.2

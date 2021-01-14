@@ -1,12 +1,13 @@
 import {resolve} from 'path';
 import * as TJS from 'typescript-json-schema';
+const normalize = require('normalize-path');
 
 export default function parse(
   filenames: string[],
   tsConfig: any,
   settings: TJS.PartialArgs = {},
 ) {
-  filenames = filenames.map(f => resolve(f));
+  filenames = filenames.map(f => resolve(f)).map(f => normalize(f));
   const program = TJS.getProgramFromFiles(filenames, tsConfig);
 
   const generator = TJS.buildGenerator(program, {
