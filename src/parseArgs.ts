@@ -101,6 +101,9 @@ export function parseArgs(args?: string[]): ParsedArgs {
     .string('id')
     .default('id', defaultArgs.id)
     .describe('id', 'ID of schema.')
+    .string('defaultNumberType')
+    .default('defaultNumberType', defaultArgs.defaultNumberType)
+    .describe('defaultNumberType', 'The default number type of the schema.')
 
     // ajv options
 
@@ -183,6 +186,7 @@ export function parseArgs(args?: string[]): ParsedArgs {
         uniqueNames: parsedArgs.uniqueNames,
         rejectDateType: parsedArgs.rejectDateType,
         id: parsedArgs.id,
+        defaultNumberType: parsedArgs.defaultNumberType,
       },
       ajv: {
         coerceTypes: parsedArgs.coerceTypes,

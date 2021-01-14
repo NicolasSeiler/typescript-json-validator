@@ -21,7 +21,15 @@ export function printTypeCollectionValidator(
   options: Ajv.Options = {},
 ) {
   const koaTypes = symbols.filter(typeName => {
-    return isKoaType(schema.definitions && schema.definitions[typeName]);
+    if (
+      schema.definitions &&
+      schema.definitions[typeName] &&
+      typeof schema.definitions[typeName] !== 'boolean'
+    ) {
+      return isKoaType(schema.definitions[typeName] as TJS.Definition);
+    } else {
+      return false;
+    }
   });
   return [
     t.TSLINT_DISABLE,

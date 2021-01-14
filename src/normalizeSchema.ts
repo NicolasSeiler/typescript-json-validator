@@ -9,21 +9,20 @@ export default function normalizeSchema(
     result = {...processAnyOf(anyOf, schema.definitions), ...extra};
   }
   let outputDefinitions: {
-    [key: string]: TJS.Definition;
+    [key: string]: TJS.DefinitionOrBoolean;
   } = {};
   if (schema.definitions) {
     const defs: {
-      [key: string]: TJS.Definition;
+      [key: string]: TJS.DefinitionOrBoolean;
     } = schema.definitions;
     Object.keys(defs).forEach(definition => {
+      const def = defs[definition];
       if (
-        defs[definition].anyOf &&
-        Object.keys(defs[definition]).length === 1
+        typeof def !== 'boolean' &&
+        def.anyOf &&
+        Object.keys(def).length === 1
       ) {
-        outputDefinitions[definition] = processAnyOf(
-          defs[definition].anyOf!,
-          defs,
-        );
+        outputDefinitions[definition] = processAnyOf(def.anyOf!, defs);
       } else {
         outputDefinitions[definition] = defs[definition];
       }
@@ -33,16 +32,19 @@ export default function normalizeSchema(
     ...result,
     definitions: schema.definitions ? outputDefinitions : schema.definitions,
   };
-  return schema;
 }
 
 function processAnyOf(
-  types: TJS.Definition[],
+  types: TJS.DefinitionOrBoolean[],
   definitions: {
-    [key: string]: TJS.Definition;
+    [key: string]: TJS.DefinitionOrBoolean;
   },
 ): TJS.Definition {
-  function resolve(ref: TJS.Definition) {
+  function resolve(ref: TJS.DefinitionOrBoolean) {
+    if (typeof ref === 'boolean') {
+      return ref;
+    }
+
     let match;
     if (
       ref.$ref &&
@@ -54,7 +56,7 @@ function processAnyOf(
       return ref;
     }
   }
-  const resolved = types.map(resolve);
+  const resolved = types.map(resolve).filter(isNotBoolean);
   const typeKeys = intersect(resolved.map(getCandidates)).filter(candidate => {
     const seen = new Set<number | string>();
     const firstType = getType(resolved[0], candidate);
@@ -89,7 +91,12 @@ function processAnyOf(
       return {
         if: {
           properties: {
-            [key]: {type, enum: [getValue(resolve(remainingTypes[0]), key)]},
+            [key]: {
+              type,
+              enum: [
+                getValue(resolve(remainingTypes[0]) as TJS.Definition, key),
+              ],
+            },
           },
           required: [key],
         },
@@ -98,27 +105,48 @@ function processAnyOf(
       } as any;
     }
   }
-  return recurse(types);
+  return recurse(types.filter(isNotBoolean));
 }
 
 function getCandidates(type: TJS.Definition) {
   const required = type.required || [];
-  return required.filter(
-    key =>
-      type.properties &&
-      type.properties[key] &&
-      (type.properties[key].type === 'string' ||
-        type.properties[key].type === 'number') &&
-      type.properties[key].enum &&
-      type.properties[key].enum.length === 1,
-  );
+  return required.filter(key => {
+    if (type.properties) {
+      const property = type.properties[key];
+      if (typeof property === 'boolean') {
+        return false;
+      }
+
+      return (
+        property &&
+        (property.type === 'string' || property.type === 'number') &&
+        property.enum &&
+        property.enum.length === 1
+      );
+    }
+
+    return false;
+  });
 }
 function getType(type: TJS.Definition, key: string): string {
-  return type.properties![key].type;
+  const property = type.properties![key];
+  if (typeof property === 'boolean') {
+    throw new Error('Can not fetch type of boolean property');
+  }
+
+  return property.type as string;
 }
 function getValue(type: TJS.Definition, key: string): string | number {
-  return type.properties![key].enum[0];
+  const property = type.properties![key];
+  if (typeof property === 'boolean') {
+    throw new Error('Can not fetch type of boolean property');
+  }
+
+  return property.enum![0] as string | number;
 }
 function intersect(values: string[][]): string[] {
   return values[0].filter(v => values.every(vs => vs.includes(v)));
+}
+function isNotBoolean(value: TJS.DefinitionOrBoolean): value is TJS.Definition {
+  return typeof value !== 'boolean';
 }

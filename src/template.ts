@@ -77,8 +77,14 @@ export default function validate(value: unknown): ${typeName} {
 `;
 
 function typeOf(typeName: string, property: string, schema: TJS.Definition) {
-  if (schema.definitions && schema.definitions[typeName]) {
-    const typeSchema: TJS.Definition = schema.definitions[typeName];
+  if (
+    schema.definitions &&
+    schema.definitions[typeName] &&
+    typeof schema.definitions[typeName] !== 'boolean'
+  ) {
+    const typeSchema: TJS.Definition = schema.definitions[
+      typeName
+    ] as TJS.Definition;
     if (
       typeSchema.properties &&
       Object.keys(typeSchema.properties).includes(property)
