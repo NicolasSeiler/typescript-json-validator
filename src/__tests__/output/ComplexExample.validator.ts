@@ -153,7 +153,7 @@ export function validateKoaRequest(
     }
     return data;
   };
-  return ctx => {
+  return (ctx) => {
     return {
       params: validateProperty('params', params, ctx),
       query: validateProperty('query', query, ctx),
