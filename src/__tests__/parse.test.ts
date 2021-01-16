@@ -1,10 +1,9 @@
 import parse from '../parse';
 import Ajv from 'ajv';
-import loadTsConfig from '../loadTsConfig';
 
 test('parse', () => {
   expect(
-    parse([__dirname + '/../ComplexExample.ts'], loadTsConfig()).getAllTypes(),
+    parse([__dirname + '/../ComplexExample.ts']).getAllTypes(),
   ).toMatchInlineSnapshot(`
 Object {
   "schema": Object {
@@ -107,7 +106,7 @@ Object {
 });
 
 test('ajv', () => {
-  const parsed = parse([__dirname + '/../ComplexExample.ts'], loadTsConfig(), {
+  const parsed = parse([__dirname + '/../ComplexExample.ts'], {
     titles: true,
   });
   const {schema} = parsed.getAllTypes();

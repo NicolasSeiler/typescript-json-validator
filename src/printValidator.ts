@@ -17,7 +17,7 @@ export function printTypeCollectionValidator(
   symbols: string[],
   schema: TJS.Definition,
   relativePath: string,
-  tsConfig: any,
+  compilerOptions: TJS.CompilerOptions,
   options: Ajv.Options = {},
 ) {
   const koaTypes = symbols.filter(typeName => {
@@ -34,7 +34,7 @@ export function printTypeCollectionValidator(
   return [
     t.TSLINT_DISABLE,
     t.GENERATED_COMMENT,
-    t.IMPORT_AJV(tsConfig),
+    t.IMPORT_AJV(compilerOptions),
     t.importNamedTypes(symbols, relativePath),
     ...(koaTypes.length ? [t.IMPORT_INSPECT, t.DECLARE_KOA_CONTEXT] : []),
     t.declareAJV(options),
@@ -55,14 +55,14 @@ export function printSingleTypeValidator(
   isNamedExport: boolean,
   schema: TJS.Definition,
   relativePath: string,
-  tsConfig: any,
+  compilerOptions: TJS.CompilerOptions,
   options: Ajv.Options = {},
 ) {
   return [
     t.TSLINT_DISABLE,
     t.GENERATED_COMMENT,
     t.IMPORT_INSPECT,
-    t.IMPORT_AJV(tsConfig),
+    t.IMPORT_AJV(compilerOptions),
     t.importType(typeName, relativePath, {isNamedExport}),
     t.declareAJV(options),
     t.exportNamed([typeName]),

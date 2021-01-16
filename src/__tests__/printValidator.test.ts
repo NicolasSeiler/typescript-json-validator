@@ -2,23 +2,21 @@ import parse from '../parse';
 import {printTypeCollectionValidator} from '../printValidator';
 import {writeFileSync} from 'fs';
 import prettierFile from '../prettierFile';
-import loadTsConfig from '../loadTsConfig';
 
 let validate: typeof import('./output/ComplexExample.validator') = undefined as any;
 
 test('print', () => {
-  const tsConfig = loadTsConfig();
-  const {symbols, schema} = parse(
-    [__dirname + '/../ComplexExample.ts'],
-    tsConfig,
-  ).getAllTypes();
+  const parsed = parse(
+    [__dirname + '/../ComplexExample.ts']
+  );
+  const {symbols, schema} = parsed.getAllTypes();
   writeFileSync(
     __dirname + '/output/ComplexExample.validator.ts',
     printTypeCollectionValidator(
       symbols,
       schema,
       '../../ComplexExample',
-      tsConfig,
+      parsed.compilerOptions,
     ),
   );
   prettierFile(__dirname + '/output/ComplexExample.validator.ts');

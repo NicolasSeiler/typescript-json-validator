@@ -57,12 +57,12 @@ afterEach(() =>
 test('ESNext module settings', () =>
   // We expect a project not to build correctly if it has ES module
   // target and no esModuleInterop.
-  expect(buildProject('esnext')).rejects.toMatch('TS1202:'));
+  expect(buildProject('esnext')).rejects.toMatch('Import assignment cannot be used when targeting ECMAScript modules'));
 
 test('ESNext interop module settings', () => buildProject('esnext-interop'));
 
 test('ES2015 module settings', () =>
-  expect(buildProject('es2015')).rejects.toMatch('TS1202:'));
+  expect(buildProject('es2015')).rejects.toMatch('Import assignment cannot be used when targeting ECMAScript modules'));
 
 test('ES2015 interop module settings', () => buildProject('es2015-interop'));
 

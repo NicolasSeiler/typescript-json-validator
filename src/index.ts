@@ -7,7 +7,6 @@ import {
   printTypeCollectionValidator,
 } from './printValidator';
 import prettierFile from './prettierFile';
-import loadTsConfig from './loadTsConfig';
 import normalizeSchema from './normalizeSchema';
 
 export {
@@ -19,10 +18,8 @@ export {
 
 export default function run(args?: string[]) {
   const {files, options} = parseArgs(args);
-  const tsConfig = loadTsConfig();
   const parsed = parse(
     files.map(f => f.fileName),
-    tsConfig,
     options.schema,
   );
 
@@ -36,7 +33,7 @@ export default function run(args?: string[]) {
         options.useNamedExport,
         normalizeSchema(schema),
         `./${basename(fileName, /\.ts$/.test(fileName) ? '.ts' : '.tsx')}`,
-        tsConfig,
+        parsed.compilerOptions,
         options.ajv,
       );
     } else {
@@ -45,7 +42,7 @@ export default function run(args?: string[]) {
         symbols,
         normalizeSchema(schema),
         `./${basename(fileName, /\.ts$/.test(fileName) ? '.ts' : '.tsx')}`,
-        tsConfig,
+        parsed.compilerOptions,
         options.ajv,
       );
     }

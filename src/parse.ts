@@ -1,14 +1,16 @@
-import {resolve} from 'path';
+import {resolve, join} from 'path';
 import * as TJS from 'typescript-json-schema';
+import { createProjectSync } from '@ts-morph/bootstrap';
+import { cwd } from 'process';
 const normalize = require('normalize-path');
 
 export default function parse(
   filenames: string[],
-  tsConfig: any,
   settings: TJS.PartialArgs = {},
 ) {
   filenames = filenames.map(f => resolve(f)).map(f => normalize(f));
-  const program = TJS.getProgramFromFiles(filenames, tsConfig);
+  const project = createProjectSync({ tsConfigFilePath: join(cwd(), "tsconfig.json") });
+  const program = project.createProgram();
 
   const generator = TJS.buildGenerator(program, {
     rejectDateType: true,
@@ -39,5 +41,6 @@ export default function parse(
     getType(name: string) {
       return generator.getSchemaForSymbol(name);
     },
+    compilerOptions: project.compilerOptions.get()
   };
 }
