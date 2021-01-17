@@ -22,7 +22,6 @@ function isESModule(moduleKind: ts.ModuleKind | undefined) {
   }
 
   const moduleKindName = ts.ModuleKind[moduleKind];
-  console.log(moduleKindName);
   return /^ES/.test(moduleKindName);
 }
 

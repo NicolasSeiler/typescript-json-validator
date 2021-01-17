@@ -4,12 +4,18 @@ import { createProjectSync } from '@ts-morph/bootstrap';
 import { cwd } from 'process';
 const normalize = require('normalize-path');
 
+// TODO: Use asynchronous variants of functions
 export default function parse(
   filenames: string[],
   settings: TJS.PartialArgs = {},
 ) {
   filenames = filenames.map(f => resolve(f)).map(f => normalize(f));
-  const project = createProjectSync({ tsConfigFilePath: join(cwd(), "tsconfig.json") });
+  const project = createProjectSync({ tsConfigFilePath: join(cwd(), "tsconfig.json"), skipAddingFilesFromTsConfig: true });
+  filenames.forEach(file => project.addSourceFileAtPathSync(file));
+  const typeRoots = project.compilerOptions.get().typeRoots;
+  if (typeRoots) {
+    typeRoots.filter(typeRoot => !typeRoot.includes("node_modules/@types")).forEach(typeRoot => project.addSourceFilesByPathsSync(join(typeRoot, "**/*.d.ts")));
+  }
   const program = project.createProgram();
 
   const generator = TJS.buildGenerator(program, {
